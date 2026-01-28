@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>امتحان الاول على الجهاز العصبي - المعلم احمد الجمال</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f7f6; margin: 0; padding: 20px; }
+        .container { max-width: 800px; margin: 0 auto; background-color: #fff; padding: 30px; border-radius: 10px; box-shadow: 0 0 15px rgba(0,0,0,0.1); }
+        header { text-align: center; border-bottom: 3px solid #2c3e50; padding-bottom: 20px; margin-bottom: 30px; }
+        header h1 { color: #2c3e50; font-size: 24px; margin-bottom: 10px; }
+        header h2 { color: #16a085; font-size: 20px; margin: 5px 0; }
+        header p { color: #7f8c8d; font-size: 18px; margin: 5px 0; font-weight: bold; }
+        .question-box { margin-bottom: 25px; padding: 15px; border: 1px solid #e0e0e0; border-radius: 8px; background-color: #fafafa; }
+        .question-title { font-weight: bold; font-size: 18px; margin-bottom: 15px; color: #34495e; }
+        .options label { display: block; margin-bottom: 10px; cursor: pointer; padding: 8px; border-radius: 4px; transition: background 0.2s; }
+        .options label:hover { background-color: #e8f6f3; }
+        input[type="radio"] { margin-left: 10px; }
+        button.submit-btn { background-color: #27ae60; color: white; border: none; padding: 15px 30px; font-size: 18px; border-radius: 5px; cursor: pointer; width: 100%; margin-top: 20px; }
+        button.submit-btn:hover { background-color: #219150; }
+        .result-box { display: none; margin-top: 30px; text-align: center; padding: 20px; background-color: #dff0d8; border: 1px solid #d6e9c6; color: #3c763d; border-radius: 5px; font-size: 22px; font-weight: bold; }
+        .feedback { margin-top: 10px; font-size: 14px; color: #c0392b; display: none; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>امتحان الاول على الجهاز العصبي المركزي والطرفي والذاتي</h1>
+        <h2>اسم المعلم: احمد الجمال / منصة ادرس جو</h2>
+        <p>هاتف: 0785097982</p>
+    </header>
+
+    <form id="quizForm">
+        <div id="questionsContainer"></div>
+        <button type="button" class="submit-btn" onclick="calculateScore()">تسليم الامتحان وإظهار النتيجة</button>
+    </form>
+
+    <div id="result" class="result-box"></div>
+</div>
+
+<script>
+    // تم حذف الأسئلة 18, 19, 20, 21 وإعادة الترتيب
+    const questions = [
+        { q: "1) أي تركيب يُكوّن الجهاز العصبي المركزي في الإنسان؟", options: ["أ. الأعصاب الدماغية", "ب. الدماغ والحبل الشوكي", "ج. الجهاز العصبي الطرفي", "د. الأعصاب الشوكية"], answer: 1 },
+        { q: "2) أي جزء مسؤول عن التفكير والتعلّم والذاكرة؟", options: ["أ. المهاد", "ب. المخيخ", "ج. المخ", "د. جذع الدماغ"], answer: 2 },
+        { q: "3) أي جزء ينسّق الحركات الإرادية ويحافظ على التوازن؟", options: ["أ. المخ", "ب. المهاد", "ج. المخيخ", "د. تحت المهاد"], answer: 2 },
+        { q: "4) أي تركيب يستقبل السيالات الحسية ويوجهها للقشرة المناسبة؟", options: ["أ. المهاد", "ب. جذع الدماغ", "ج. الحبل الشوكي", "د. تحت المهاد"], answer: 0 },
+        { q: "5) أي جزء ينظم الجوع والعطش وحرارة الجسم؟", options: ["أ. المخ", "ب. المخيخ", "ج. جذع الدماغ", "د. تحت المهاد"], answer: 3 },
+        { q: "6) أي تركيب يربط الدماغ بالحبل الشوكي ويتحكم بالتنفس؟", options: ["أ. المهاد", "ب. المخيخ", "ج. جذع الدماغ", "د. المخ"], answer: 2 },
+        { q: "7) الطبقة الخارجية للمخ تُسمّى:", options: ["أ. المادة البيضاء", "ب. القشرة المخية", "ج. الغمد المياليني", "د. العقد العصبية"], answer: 1 },
+        { q: "8) المادة البيضاء في المخ مسؤولة عن:", options: ["أ. التفكير", "ب. الذاكرة", "ج. نقل السيالات العصبية", "د. استقبال الإحساس"], answer: 2 },
+        { q: "9) أي جهاز يسمح بتفريغ المثانة؟", options: ["أ. الودي", "ب. شبه الودي", "ج. الجسمي", "د. المركزي"], answer: 1 },
+        { q: "10) طالب خائف ازداد نبض قلبه وتوقف الهضم مؤقتًا أي جهاز نشط؟", options: ["أ. شبه الودي", "ب. الجسمي", "ج. الودي", "د. المركزي"], answer: 2 },
+        { q: "11) بعد زوال الخطر عاد النبض طبيعيًا وازداد إفراز اللعاب أي جهاز أعاد التوازن؟", options: ["أ. الودي", "ب. المركزي", "ج. الجسمي", "د. شبه الودي"], answer: 3 },
+        { q: "12) تثبيط تفريغ المثانة وتنشيط بعض أعضاء الجهاز التناسلي يدل على نشاط:", options: ["أ. شبه الودي", "ب. المركزي", "ج. الودي", "د. الجسمي"], answer: 2 },
+        { q: "13) أي جهاز يتحكم بالعضلات الهيكلية الإرادية؟", options: ["أ. الذاتي", "ب. الجسمي", "ج. المركزي", "د. الطرفي"], answer: 1 },
+        { q: "14) سحب اليد بسرعة عن جسم ساخن مثال على:", options: ["أ. الجهاز الودي", "ب. الجهاز الذاتي", "ج. القوس الانعكاسي", "د. المخيخ"], answer: 2 },
+        { q: "15) العصبونات التي تنقل الإحساس إلى الجهاز العصبي المركزي تُسمّى:", options: ["أ. حركية", "ب. موصلة", "ج. حسية", "د. ذاتية"], answer: 2 },
+        { q: "16) العصبونات التي تنقل الأوامر إلى العضلات تُسمّى:", options: ["أ. حسية", "ب. موصلة", "ج. حركية", "د. ذاتية"], answer: 2 },
+        { q: "17) العصبونات التي تصل بين الحسية والحركية تُسمّى:", options: ["أ. محورية", "ب. موصلة", "ج. داخلية", "د. ميالينية"], answer: 1 },
+        // تم حذف 18, 19, 20, 21 وتعديل الترقيم
+        { q: "18) الجهاز العصبي الطرفي يتكوّن من:", options: ["أ. الدماغ فقط", "ب. الحبل الشوكي فقط", "ج. الأعصاب الدماغية والشوكية", "د. المخ والمخيخ"], answer: 2 },
+        { q: "19) عند الهروب من خطر مفاجئ زاد معدل التنفس وتوسع الحدقة أي جهاز نشط؟", options: ["أ. شبه الودي", "ب. المركزي", "ج. الجسمي", "د. الودي"], answer: 3 },
+        { q: "20) بعد وجبة كبيرة شعر الشخص بالاسترخاء ونشاط الهضم أي جهاز يعمل؟", options: ["أ. الودي", "ب. الجسمي", "ج. شبه الودي", "د. المركزي"], answer: 2 },
+        { q: "21) أي جزء يحافظ على استمرار الوظائف الحيوية أثناء النوم أو الغيبوبة؟", options: ["أ. المخ", "ب. القشرة المخية", "ج. المخيخ", "د. جذع الدماغ"], answer: 3 },
+        { q: "22) أي تركيب يربط الدماغ بالحبل الشوكي؟", options: ["أ. المخيخ", "ب. المهاد", "ج. جذع الدماغ", "د. تحت المهاد"], answer: 2 },
+        { q: "23) استقبال السيالات الحسية من الجلد يتم أولًا عبر:", options: ["أ. عصبونات حركية", "ب. عصبونات حسية", "ج. عصبونات موصلة", "د. عصبونات ذاتية"], answer: 1 },
+        { q: "24) نقل الأوامر من الجهاز العصبي المركزي إلى الغدد يتم بواسطة:", options: ["أ. أعصاب واردة", "ب. أعصاب حسية", "ج. أعصاب صادرة", "د. عصبونات موصلة"], answer: 2 },
+        { q: "25) أي جهاز ينظم الوظائف اللاإرادية كالهضم وضربات القلب؟", options: ["أ. الجسمي", "ب. المركزي", "ج. الذاتي", "د. الطرفي"], answer: 2 },
+        { q: "26) السماح بتفريغ المثانة يحدث عند سيطرة:", options: ["أ. الودي", "ب. الجسمي", "ج. المركزي", "د. شبه الودي"], answer: 3 }
+    ];
+
+    const container = document.getElementById('questionsContainer');
+
+    questions.forEach((q, index) => {
+        const qDiv = document.createElement('div');
+        qDiv.classList.add('question-box');
+        
+        let optionsHtml = '';
+        q.options.forEach((opt, i) => {
+            optionsHtml += `
+                <label id="label_${index}_${i}">
+                    <input type="radio" name="q${index}" value="${i}"> ${opt}
+                </label>
+            `;
+        });
+
+        qDiv.innerHTML = `
+            <div class="question-title">${q.q}</div>
+            <div class="options">${optionsHtml}</div>
+            <div id="feedback_${index}" class="feedback"></div>
+        `;
+        container.appendChild(qDiv);
+    });
+
+    function calculateScore() {
+        let score = 0;
+        let total = questions.length;
+
+        questions.forEach((q, index) => {
+            const selected = document.querySelector(`input[name="q${index}"]:checked`);
+            const feedbackDiv = document.getElementById(`feedback_${index}`);
+            
+            for(let i=0; i<4; i++) {
+                const label = document.getElementById(`label_${index}_${i}`);
+                if(label) label.style.backgroundColor = "";
+            }
+
+            if (selected) {
+                const val = parseInt(selected.value);
+                if (val === q.answer) {
+                    score++;
+                    document.getElementById(`label_${index}_${val}`).style.backgroundColor = "#dff0d8";
+                    feedbackDiv.style.display = "none";
+                } else {
+                    document.getElementById(`label_${index}_${val}`).style.backgroundColor = "#f2dede";
+                    document.getElementById(`label_${index}_${q.answer}`).style.backgroundColor = "#dff0d8";
+                    feedbackDiv.innerHTML = `إجابة خاطئة! الإجابة الصحيحة هي: ${q.options[q.answer]}`;
+                    feedbackDiv.style.display = "block";
+                }
+            } else {
+                document.getElementById(`label_${index}_${q.answer}`).style.backgroundColor = "#dff0d8";
+                feedbackDiv.innerHTML = `لم تقم بالإجابة! الإجابة الصحيحة هي: ${q.options[q.answer]}`;
+                feedbackDiv.style.display = "block";
+            }
+        });
+
+        const resultBox = document.getElementById('result');
+        resultBox.style.display = 'block';
+        resultBox.innerHTML = `نتيجتك هي: ${score} من ${total}`;
+        window.scrollTo(0, document.body.scrollHeight);
+    }
+</script>
+
+</body>
+</html>
